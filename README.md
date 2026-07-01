@@ -38,6 +38,35 @@ builder
 the classpath alongside this module — the classes would clash. (Upstream stops
 publishing it at Kafka 5.0, so this only matters on 4.x.)
 
+## Avro serdes (avro4s + Confluent Schema Registry)
+
+Beyond the vendored upstream code, the module adds `AvroSerdes`: serdes using the
+Confluent Schema Registry wire format, with case classes mapped to Avro records by
+[avro4s](https://github.com/sksamuel/avro4s) (4.x on Scala 2.13, 5.x on Scala 3 —
+a small version bridge in `src/main/scala-2` / `scala-3` hides the API difference).
+
+```scala
+import org.apache.kafka.streams.scala.serialization.AvroSerdes
+
+case class Order(id: String, amount: Double, note: Option[String], tags: List[String])
+
+// schema is derived from the case class and auto-registered under <topic>-value
+implicit val orderSerde: Serde[Order] = AvroSerdes.caseClass[Order]("http://schema-registry:8081")
+
+builder.stream[String, Order]("orders")
+```
+
+- `AvroSerdes.caseClass[T](url, isKey, properties)` — case class serde; pass
+  `isKey = true` for key serdes (subject naming), and extra registry client config
+  (auth, `auto.register.schemas`, subject name strategy, …) via `properties`.
+- `AvroSerdes.genericRecord(url, isKey, properties)` — pass-through serde for
+  `org.apache.avro.generic.GenericRecord`.
+
+The serdes are configured eagerly from the constructor arguments (the serde's own
+`configure` hook is a no-op), so pass them explicitly or implicitly rather than as
+`default.value.serde` class names. In tests, Confluent's in-memory registry works
+out of the box via `mock://` URLs: `AvroSerdes.caseClass[Order]("mock://my-test")`.
+
 ## Build
 
 ```
