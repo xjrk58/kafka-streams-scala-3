@@ -1,0 +1,35 @@
+name: Release
+
+# Publishes to Maven Central (Central Portal) via sbt-ci-release.
+# - Tag pushes (v*) publish a release, e.g. v4.3.0 -> 4.3.0.
+# - Pushes to master/main publish a -SNAPSHOT version derived by sbt-dynver.
+#
+# Required repository secrets (see https://github.com/sbt/sbt-ci-release#secrets):
+#   PGP_SECRET, PGP_PASSPHRASE  - base64-encoded GPG signing key + its passphrase
+#   SONATYPE_USERNAME, SONATYPE_PASSWORD - Central Portal user token (not the account login)
+on:
+  push:
+    branches: [master, main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # sbt-dynver derives the version from git tags
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - name: Publish
+        run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
