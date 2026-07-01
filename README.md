@@ -1,4 +1,6 @@
-# kafka-streams-scala (vendored)
+# kafka-streams-scala-3
+
+[![CI](https://github.com/xjrk58/kafka-streams-scala-3/actions/workflows/ci.yml/badge.svg)](https://github.com/xjrk58/kafka-streams-scala-3/actions/workflows/ci.yml)
 
 A vendored, cross-built continuation of Apache Kafka's `streams-scala` module —
 the idiomatic Scala DSL for Kafka Streams — which was deprecated in Kafka 4.3 and
@@ -15,6 +17,10 @@ removed in Kafka 5.0 per
   both Scala versions.
 
 ## Usage
+
+```scala
+libraryDependencies += "io.github.xjrk58" %% "kafka-streams-scala" % "<version>"
+```
 
 The package name `org.apache.kafka.streams.scala` is kept as-is, so migrating an
 existing application is a dependency swap with **no import changes**:
@@ -75,15 +81,32 @@ sbt +test       # run the test suite on both
 sbt +package    # build jars for both
 ```
 
+## CI and releasing
+
+GitHub Actions runs formatting checks (`scalafmtCheckAll`, using Apache Kafka's
+scalafmt config) and the cross-built test suite on every push and PR.
+
+Releases are published to **Maven Central** (Central Portal) by `sbt-ci-release`:
+
+- pushing a `v*` tag publishes that release — versions track the wrapped
+  `kafka-streams` version, e.g. `v4.3.0` → `4.3.0` (use `v4.3.0.1` etc. for
+  module-only fixes);
+- pushes to `master` publish `-SNAPSHOT` versions.
+
+The workflow needs four repository secrets (see the
+[sbt-ci-release docs](https://github.com/sbt/sbt-ci-release#secrets)):
+`PGP_SECRET`, `PGP_PASSPHRASE` (base64-encoded GPG signing key), and
+`SONATYPE_USERNAME`, `SONATYPE_PASSWORD` (a Central Portal *user token* for an
+account that owns the `io.github.xjrk58` namespace).
+
 ## Maintenance notes
 
-- `ThisBuild / version` tracks the `kafka-streams` version the module wraps
-  (currently 4.3.0). When bumping to Kafka 5.x, expect small mechanical fixes if
-  the Java Streams API surface changed.
-- Before publishing anywhere public, change `ThisBuild / organization` in
-  `build.sbt` — the `org.apache.kafka` groupId belongs to the ASF. Keeping the
-  Java *package* name is fine under the Apache-2.0 terms (attribution is in
-  `NOTICE`), but the artifact coordinates must be your own.
+- When bumping to Kafka 5.x, update `kafkaVersion` in `build.sbt` and expect
+  small mechanical fixes if the Java Streams API surface changed.
+- The `org.apache.kafka.streams.scala` *package* name is kept for drop-in
+  compatibility, which is fine under the Apache-2.0 terms (attribution is in
+  `NOTICE`); the artifact is published under the `io.github.xjrk58` groupId
+  because `org.apache.kafka` belongs to the ASF.
 
 ## Local modifications vs upstream
 
