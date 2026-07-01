@@ -18,7 +18,6 @@ package org.apache.kafka.streams.scala.kstream
 
 import org.apache.kafka.streams.kstream.{Branched => BranchedJ, KStream => KStreamJ}
 
-@deprecated("Use `org.apache.kafka.streams.kstream.Branched` instead", "4.3.0")
 object Branched {
 
   /**

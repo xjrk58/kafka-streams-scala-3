@@ -21,7 +21,6 @@ import org.apache.kafka.streams.kstream.{Consumed => ConsumedJ}
 import org.apache.kafka.streams.{AutoOffsetReset, Topology}
 import org.apache.kafka.streams.processor.TimestampExtractor
 
-@deprecated("Use `org.apache.kafka.streams.kstream.Consumed` instead", "4.3.0")
 object Consumed {
 
   /**

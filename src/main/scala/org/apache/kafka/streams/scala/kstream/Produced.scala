@@ -20,7 +20,6 @@ import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.kstream.{Produced => ProducedJ}
 import org.apache.kafka.streams.processor.StreamPartitioner
 
-@deprecated("Use `org.apache.kafka.streams.kstream.Produced` instead", "4.3.0")
 object Produced {
 
   /**

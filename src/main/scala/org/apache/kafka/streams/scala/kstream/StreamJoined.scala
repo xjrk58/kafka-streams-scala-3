@@ -20,7 +20,6 @@ import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.kstream.{StreamJoined => StreamJoinedJ}
 import org.apache.kafka.streams.state.WindowBytesStoreSupplier
 
-@deprecated("Use `org.apache.kafka.streams.kstream.StreamJoined` instead", "4.3.0")
 object StreamJoined {
 
   /**
