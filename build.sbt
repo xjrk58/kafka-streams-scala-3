@@ -17,6 +17,7 @@ lazy val root = (project in file("."))
     name               := "kafka-streams-scala",
     scalaVersion       := scala213,
     crossScalaVersions := Seq(scala213, scala3),
+    resolvers += "Confluent" at "https://packages.confluent.io/maven/",
     scalacOptions ++= Seq(
       "-deprecation",
       "-feature",
@@ -25,6 +26,12 @@ lazy val root = (project in file("."))
     ),
     libraryDependencies ++= Seq(
       "org.apache.kafka"    % "kafka-streams"            % kafkaVersion,
+      "io.confluent"        % "kafka-avro-serializer"    % "8.3.0",
+      // avro4s 4.x is the Scala 2 line, 5.x the Scala 3 line; both expose RecordFormat
+      "com.sksamuel.avro4s" %% "avro4s-core" % (CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, _)) => "4.1.2"
+        case _            => "5.0.15"
+      }),
       "org.apache.kafka"    % "kafka-streams-test-utils" % kafkaVersion                    % Test,
       "org.junit.jupiter"   % "junit-jupiter"            % "5.10.3"                        % Test,
       "org.mockito"         % "mockito-core"             % "5.14.2"                        % Test,
