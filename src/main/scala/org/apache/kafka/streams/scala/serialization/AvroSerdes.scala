@@ -16,7 +16,7 @@ package org.apache.kafka.streams.scala.serialization
 import com.sksamuel.avro4s.{Decoder, Encoder, SchemaFor}
 import io.confluent.kafka.serializers.{AbstractKafkaSchemaSerDeConfig, KafkaAvroDeserializer, KafkaAvroSerializer}
 import org.apache.avro.generic.{GenericRecord, IndexedRecord}
-import org.apache.kafka.common.serialization.{Deserializer, Serde, Serializer, Serdes => JSerdes}
+import org.apache.kafka.common.serialization.{Deserializer, Serde, Serdes => JSerdes, Serializer}
 
 import java.util
 import scala.jdk.CollectionConverters._
