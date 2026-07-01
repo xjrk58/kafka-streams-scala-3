@@ -23,6 +23,7 @@ import org.apache.kafka.streams.kstream.{
   SlidingWindows,
   Suppressed => JSuppressed,
   TimeWindows,
+  ValueJoiner,
   Windowed
 }
 import org.apache.kafka.streams.scala.ImplicitConversions._
@@ -549,7 +550,7 @@ class KTableTest extends TestDriver {
       .join[String, String, String](
         table2,
         (key: String, value: String) => s"$key-$value",
-        joiner = (v1: String, v2: String) => s"$v1+$v2",
+        joiner = ((v1: String, v2: String) => s"$v1+$v2"): ValueJoiner[String, String, String],
         materialized = Materialized.`with`[String, String, ByteArrayKeyValueStore]
       )
       .toStream
@@ -584,7 +585,8 @@ class KTableTest extends TestDriver {
       .leftJoin[String, String, String](
         table2,
         (key: String, value: String) => s"$key-$value",
-        joiner = (v1: String, v2: String) => s"${v1}+${Option(v2).getOrElse("null")}",
+        joiner =
+          ((v1: String, v2: String) => s"${v1}+${Option(v2).getOrElse("null")}"): ValueJoiner[String, String, String],
         materialized = Materialized.`with`[String, String, ByteArrayKeyValueStore]
       )
       .toStream
