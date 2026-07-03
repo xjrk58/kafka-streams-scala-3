@@ -21,9 +21,12 @@ import org.apache.kafka.streams.scala.serialization.Serdes._
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+import scala.annotation.nowarn
+
 class JoinedTest {
 
   @Test
+  @nowarn("cat=deprecation") // exercises the deprecated serde accessors
   def testCreateJoined(): Unit = {
     val joined: Joined[String, Long, Int] = Joined.`with`[String, Long, Int]
 
@@ -33,6 +36,7 @@ class JoinedTest {
   }
 
   @Test
+  @nowarn("cat=deprecation") // exercises the deprecated serde accessors
   def testCreateJoinedWithSerdesAndRepartitionTopicName(): Unit = {
     val repartitionTopicName = "repartition-topic"
     val joined: Joined[String, Long, Int] = Joined.`with`(repartitionTopicName)

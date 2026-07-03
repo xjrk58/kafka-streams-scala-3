@@ -52,5 +52,10 @@ lazy val root = (project in file("."))
       "org.slf4j" % "slf4j-simple" % "2.0.16" % Test
     ),
     Test / fork := true,
-    Test / javaOptions += "-Dorg.slf4j.simpleLogger.defaultLogLevel=error"
+    Test / javaOptions += "-Dorg.slf4j.simpleLogger.defaultLogLevel=error",
+    // attach Mockito's inline mock maker as an agent; JDK 21+ warns on dynamic self-attach
+    Test / javaOptions ++= (Test / dependencyClasspath).value.files
+      .find(_.getName.startsWith("mockito-core"))
+      .map(jar => s"-javaagent:$jar")
+      .toSeq
   )
